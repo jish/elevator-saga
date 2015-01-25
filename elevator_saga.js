@@ -1,16 +1,22 @@
 {
   init: function(elevators, floors) {
-
-    function randomFloor() {
-      return Math.floor(Math.random() * elevators.length);
-    }
+    var idleElevators = [];
 
     elevators.forEach(function(elevator) {
       elevator.on('idle', function() {
-        elevator.goToFloor(randomFloor());
+        idleElevators.push(elevator);
       });
       elevator.on('floor_button_pressed', function(floor) {
         elevator.goToFloor(floor);
+      });
+    });
+
+    floors.forEach(function(floor) {
+      floor.on('up_button_pressed', function() {
+        var elevator = idleElevators.shift();
+        if (elevator) {
+          elevator.goToFloor(floor.floorNum());
+        }
       });
     });
 
