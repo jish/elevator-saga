@@ -3,20 +3,22 @@
     var elevator1 = elevators[0];
     var elevator2 = elevators[1];
 
+    function randomFloor() {
+      return Math.floor(Math.random() * elevators.length);
+    }
+
     elevator1.on("idle", function() {
-      elevator1.goToFloor(0);
-      elevator1.goToFloor(1);
-      elevator1.goToFloor(2);
-      elevator1.goToFloor(3);
-      elevator1.goToFloor(4);
+      elevator1.goToFloor(randomFloor());
+    });
+    elevator1.on('floor_button_pressed', function(floor) {
+      elevator1.goToFloor(floor);
     });
 
     elevator2.on("idle", function() {
-      elevator2.goToFloor(4);
-      elevator2.goToFloor(3);
-      elevator2.goToFloor(2);
-      elevator2.goToFloor(1);
-      elevator2.goToFloor(0);
+      elevator2.goToFloor(randomFloor());
+    });
+    elevator2.on('floor_button_pressed', function(floor) {
+      elevator2.goToFloor(floor);
     });
   },
   update: function(dt, elevators, floors) {
