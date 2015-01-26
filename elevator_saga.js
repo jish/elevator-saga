@@ -1,13 +1,21 @@
 {
   init: function(elevators, floors) {
     var idleElevators = [];
+    var queuedFloors = [];
 
     elevators.forEach(function(elevator) {
       elevator.on('idle', function() {
-        idleElevators.push(elevator);
+        if (queuedFloors.length) {
+          queuedFloors.forEach(function(floor) {
+            elevator.goToFloor(floor);
+          });
+          queuedFloors = [];
+        } else {
+          idleElevators.push(elevator);
+        }
       });
       elevator.on('floor_button_pressed', function(floor) {
-        if (!elevator.destinationQueue.indexOf(floor) > -1) {
+        if (elevator.destinationQueue.indexOf(floor) < 0) {
           elevator.goToFloor(floor);
         }
       });
@@ -19,6 +27,10 @@
 
         if (elevator) {
           elevator.goToFloor(floor.floorNum());
+        } else {
+          if (queuedFloors.indexOf(floor.floorNum()) < 0) {
+            queuedFloors.push(floor.floorNum());
+          }
         }
       });
       floor.on('down_button_pressed', function() {
@@ -26,6 +38,10 @@
 
         if (elevator) {
           elevator.goToFloor(floor.floorNum());
+        } else {
+          if (queuedFloors.indexOf(floor.floorNum()) < 0) {
+            queuedFloors.push(floor.floorNum());
+          }
         }
       });
     });
