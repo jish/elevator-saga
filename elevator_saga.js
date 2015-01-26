@@ -7,13 +7,23 @@
         idleElevators.push(elevator);
       });
       elevator.on('floor_button_pressed', function(floor) {
-        elevator.goToFloor(floor);
+        if (!elevator.destinationQueue.indexOf(floor) > -1) {
+          elevator.goToFloor(floor);
+        }
       });
     });
 
     floors.forEach(function(floor) {
       floor.on('up_button_pressed', function() {
         var elevator = idleElevators.shift();
+
+        if (elevator) {
+          elevator.goToFloor(floor.floorNum());
+        }
+      });
+      floor.on('down_button_pressed', function() {
+        var elevator = idleElevators.shift();
+
         if (elevator) {
           elevator.goToFloor(floor.floorNum());
         }
